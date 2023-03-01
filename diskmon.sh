@@ -3,6 +3,7 @@
 # credit to https://gist.github.com/cubedtear/54434fc66439fc4e04e28bd658189701 for the updater portion
 # credit to https://github.com/ruanyf/simple-bash-scripts/blob/master/scripts/disk-space.sh for disk space monitor example
 
+# Reasoning for this script is to move towards a faas approach for cloud infrastructure with local copy to handle faas service outages.  I include a disk monitoring example at the bottom but my goal is to have the updater function be its own faas service and provide monitoring functions independently so there is a single source of truth and a single code base to update for all hosts in a cluster without the overhead of having to write ansible script and push updates manually.
 
 
 ADMIN="root"
@@ -16,7 +17,7 @@ EXCLUDE_LIST="/snap|loop"
 #
 
 
-VERSION="0.0.2"
+VERSION="0.0.3"
 ### I'm storing the below variables in /etc/secrets/diskmon.sh so they are not included in the public example, can use env vars in docker etc.
 #slack_hook=""
 #SCRIPT_URL=""
@@ -51,7 +52,7 @@ update ()
     fi
 }
 
-#update "$@"
+update "$@"
 
 echo "$@"
 
