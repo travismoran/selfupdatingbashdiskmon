@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # set -x
 # credit to https://gist.github.com/cubedtear/54434fc66439fc4e04e28bd658189701 for the updater portion
 # credit to https://github.com/ruanyf/simple-bash-scripts/blob/master/scripts/disk-space.sh for disk space monitor example
@@ -27,14 +27,19 @@ VERSION="0.0.3"
 SCRIPT_DESCRIPTION="Disk Space Monitor"
 SCRIPT_LOCATION="$0"
 
-rm -f updater.sh
+rm -f $(pwd)/updater.sh
 
 update ()
 {
     TMP_FILE=$(mktemp -p "" "XXXXX.sh")
+    echo TMP_FILE= $TMP_FILE
     curl -s -L "$SCRIPT_URL" > "$TMP_FILE"
+    echo TMP version= ; cat $TMP_FILE | grep -i "VERSION"
     NEW_VER=$(grep "^VERSION" "$TMP_FILE" | awk -F'[="]' '{print $3}')
+    echo new_ver= $NEW_VER
     ABS_SCRIPT_PATH=$(readlink -f "$SCRIPT_LOCATION")
+    echo abs= $ABS_SCRIPT_PATH
+
     if [ "$VERSION" \< "$NEW_VER" ]
     then
         printf "Updating script \e[31;1m%s\e[0m -> \e[32;1m%s\e[0m\n" "$VERSION" "$NEW_VER"
@@ -46,7 +51,7 @@ update ()
 
         chmod +x updater.sh
         chmod +x "$TMP_FILE"
-        exec updater.sh
+        exec $(pwd)/updater.sh
     else
         rm -f "$TMP_FILE"
     fi
