@@ -17,7 +17,7 @@ EXCLUDE_LIST="/snap|loop"
 #
 
 
-VERSION="0.0.3"
+VERSION="0.0.2"
 ### I'm storing the below variables in /etc/secrets/diskmon.sh so they are not included in the public example, can use env vars in docker etc.
 #slack_hook=""
 #SCRIPT_URL=""
