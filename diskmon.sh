@@ -28,7 +28,9 @@ update ()
 {
     TMP_FILE=$(mktemp -p "" "XXXXX.sh")
     echo TMP_FILE= $TMP_FILE
-    curl -s -L "$SCRIPT_URL$(basename $BASH_SOURCE)" > "$TMP_FILE"
+    # future multi-script ipmlementation of SCRIPT_URL instead of absolute for each script
+    #curl -s -L "$SCRIPT_URL$(basename $BASH_SOURCE)" > "$TMP_FILE"
+    curl -s -L "$SCRIPT_URL" > "$TMP_FILE"
     echo TMP version= ; cat $TMP_FILE | grep -i "VERSION"
     NEW_VER=$(grep "^VERSION" "$TMP_FILE" | awk -F'[="]' '{print $3}')
     echo new_ver= $NEW_VER
