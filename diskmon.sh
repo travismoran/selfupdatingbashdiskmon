@@ -4,7 +4,7 @@
 ADMIN="root"
 # set alert level 30% is default for testing
 ALERT=30
-# Exclude list of unwanted monitoring, if several partions then use "|" to separate the partitions.
+# Exclude list of unwanted monitoring, if several partions then use "|" to separate the mounts.
 # An example: EXCLUDE_LIST="/dev/hdd1|/dev/hdc5"
 EXCLUDE_LIST="/snap|loop"
 #
@@ -81,9 +81,9 @@ gethostname () {
 
 getdisk () {
 if [ "$EXCLUDE_LIST" != "" ] ; then
-  df -H | grep -vE "^Filesystem|tmpfs|cdrom|${EXCLUDE_LIST}" | awk '{print $5 " " $6}' | main
+  df -H | grep -vE "^Filesystem|tmpfs|cdrom|${EXCLUDE_LIST}" | awk '{print $1 " " $2 " " $3 " " $4 " " $5 " " $6}' | main
 else
-  df -H | grep -vE "^Filesystem|tmpfs|cdrom" | awk '{print $5 " " $6}' | main
+  df -H | grep -vE "^Filesystem|tmpfs|cdrom" | awk '{print $1 " " $2 " " $3 " " $4 " " $5 " " $6}' | main
 fi
 }
 
@@ -92,12 +92,15 @@ while read -r output;
 do
   scriptname
   gethostname
-
-  usep=$(echo "$output" | awk '{ print $1}' | cut -d'%' -f1)
-  partition=$(echo "$output" | awk '{print $2}')
+  fs=$(echo "$output" | awk '{print $1}')
+  size=$(echo "$output" | awk '{print $2}')
+  used=$(echo "$output" | awk '{print $3}')
+  avail=$(echo "$output" | awk '{print $4}')
+  usep=$(echo "$output" | awk '{ print $5}' | cut -d'%' -f1)
+  mount=$(echo "$output" | awk '{print $6}')
   if [ $usep -ge $ALERT ] ; then
-     echo  `echo "host: $monitor_host script: $script WARNING!!! Running out of space on filesystem: $partition capacity: ($usep%)"`
-     slack_alert `echo "host: $monitor_host script: $script WARNING!!! Running out of space on filesystem: $partition capacity: ($usep%)"`
+     echo  `echo "host: $monitor_host script: $script WARNING!!! Running out of space on filesystem: Filesystem: $fs Size: $size Used: $used Avail: $avail Use%: $usep% Mount: $mount"`
+     slack_alert `echo "host: $monitor_host script: $script WARNING!!! Running out of space on filesystem: Filesystem: $fs Size: $size Used: $used Avail: $avail Use%: $usep% Mount: $mount"`
   fi
 done
 }
